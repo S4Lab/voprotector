@@ -4,7 +4,7 @@ A virtualization-obfuscation (VO) protector based on the [ROSE](http://rosecompi
 
 ## How to build
 
-First setup the ROSE environment based on [this guide](http://rosecompiler.org/ROSE_HTML_Reference/group__installation.html) or download its prebuilt [Ubuntu VM image](http://www.rosecompiler.org/Ubuntu-ROSE-Demo-V3.tar.gz) (about 4.4 GB compressed file; 20.2 GB if fully uncompressed). If you are in the Sharif university network, that VM image has been cached in the local FTP repo at [/OS/Linux/](ftp://ftp.sharif.ir/OS/Linux/Ubuntu-ROSE-Demo-V3.tar.gz).
+First setup the ROSE environment based on [this guide](http://rosecompiler.org/ROSE_HTML_Reference/group__installation.html) or download its prebuilt [Ubuntu VM image](http://www.rosecompiler.org/Ubuntu-ROSE-Demo-V3.tar.gz) (about 4.4 GB compressed file; 20.2 GB if fully uncompressed). If you are in the Sharif university network, the ROSE VM image has been cached in the local FTP repo at `ftp://ftp.sharif.ir/OS/Linux/Ubuntu-ROSE-Demo-V3.tar.gz` address.
 Assuming that `$BOOST_ROOT` points to the BOOST installation folder and `$ROSE_SRC`, `$ROSE_BLD`, and `$ROSE_INST` point to the ROSE source, build, and installation folders respectively, you can build voprotector as follows:
 
 ```
@@ -30,5 +30,5 @@ Assuming that `~/voprotector/test/input0.c` file contains the input C source cod
 There are a few sample input C source codes and their VO-protected counterparts in the `test` folder.
 The VO interpretor itself is placed in the `voprotector/test/vo-interpreter.c` file.
 Each VO-protected binary can be built using make command after switching to the `test` folder. For example `make input0.voprotected.out` command compiles the input0.voprotected.c and links it to the VO interpretor.
-To enable debug messages, uncomment the `ENABLE_VOPROTECTOR_DEBUGGING` define line at the beginning of `voprotector/test/vo-interpreter.c` file.
+To enable debug messages, uncomment the `ENABLE_VO_DEBUG_MESSAGES` define line at the beginning of `voprotector/test/vo-interpreter.c` file.
 
