@@ -27,8 +27,8 @@ VirtualizationObfuscationProtector::VirtualizationObfuscationProtector () {
 VoEncoderPtr VirtualizationObfuscationProtector::evaluateSynthesizedAttribute (SgNode *node, SynthesizedAttributesList synAttributes) {
     print (node);
     switch (node->variantT ()) {
-        case V_SgGlobal:
-            throw VoEncoderPtr (new RootVoEncoder (isSgGlobal (node), synAttributes));
+        case V_SgFunctionDeclaration:
+            return visitFunctionDeclaration (isSgFunctionDeclaration (node), synAttributes);
 
         case V_SgPntrArrRefExp:
             return VoEncoderPtr (new PntrDerefVoEncoder (synAttributes));
@@ -85,6 +85,18 @@ VoEncoderPtr VirtualizationObfuscationProtector::evaluateSynthesizedAttribute (S
         default:
             return VoEncoderPtr (new SequenceVoEncoder (synAttributes));
     }
+}
+
+VoEncoderPtr VirtualizationObfuscationProtector::visitFunctionDeclaration (
+        SgFunctionDeclaration *functionDecl,
+        SynthesizedAttributesList synAttributes) const {
+    SgGlobal *global = isSgGlobal (isSgStatement (functionDecl)->get_scope ());
+    if (global) {
+        if (functionDecl->get_name () == "main" && functionDecl->get_definingDeclaration() == functionDecl) {
+            throw VoEncoderPtr (new RootVoEncoder (global, functionDecl, synAttributes));
+        }
+    }
+    return VoEncoderPtr (new SequenceVoEncoder (synAttributes));
 }
 
 VoEncoderPtr VirtualizationObfuscationProtector::visitFunction (

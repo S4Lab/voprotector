@@ -39,8 +39,7 @@ int main (int argc, char *argv[]) {
     } catch (const VoEncoderPtr &voep) {
         RootVoEncoder *rvoe = dynamic_cast<RootVoEncoder *> (voep.get ());
         ROSE_ASSERT (rvoe != NULL);
-        SgFunctionDeclaration *dec = SageInterface::findMain (project);
-        rvoe->encode (dec);
+        rvoe->encode ();
     } catch (const char *err_msg) {
         cerr << "Exception thrown: " << err_msg << endl;
         return -1;

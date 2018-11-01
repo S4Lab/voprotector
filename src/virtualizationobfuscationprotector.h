@@ -12,6 +12,7 @@ protected:
     VoEncoderPtr evaluateSynthesizedAttribute (SgNode *node, SynthesizedAttributesList synAttributes);
 
 private:
+    VoEncoderPtr visitFunctionDeclaration (SgFunctionDeclaration *functionDecl, SynthesizedAttributesList synAttributes) const;
     VoEncoderPtr visitFunction (SgFunctionCallExp *functionCallExp, SynthesizedAttributesList synAttributes) const;
     void print (SgNode *node) const;
 };

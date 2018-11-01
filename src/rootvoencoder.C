@@ -5,12 +5,15 @@
 using namespace std;
 
 
-RootVoEncoder::RootVoEncoder (SgGlobal *_globalScope, VoEncoderPtrsList _children) :
-    SequenceVoEncoder (_children), globalScope (_globalScope) {
+RootVoEncoder::RootVoEncoder (SgGlobal *_globalScope, SgFunctionDeclaration *_mainDec,
+    VoEncoderPtrsList _children) :
+        SequenceVoEncoder (_children),
+        globalScope (_globalScope),
+        mainDec (_mainDec) {
     cerr << "RootVoEncoder()\n";
 }
     
-void RootVoEncoder::encode (SgFunctionDeclaration *mainDec) const {
+void RootVoEncoder::encode () const {
     cerr << "RootVoEncoder::encode\n";
     SgBasicBlock *globalVariables = SageBuilder::buildBasicBlock ();
     SgExprListExp *program_text = SageBuilder::buildExprListExp ();

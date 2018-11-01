@@ -7,11 +7,12 @@
 class RootVoEncoder : public SequenceVoEncoder {
 private:
     SgGlobal *globalScope;
+    SgFunctionDeclaration *mainDec;
 
 public:
-    RootVoEncoder (SgGlobal *_globalScope, VoEncoderPtrsList _children);
+    RootVoEncoder (SgGlobal *_globalScope, SgFunctionDeclaration *_mainDec, VoEncoderPtrsList _children);
     
-    void encode (SgFunctionDeclaration *mainDec) const;
+    void encode () const;
 
 private:
     void replaceMain (SgFunctionDeclaration *mainDec,
