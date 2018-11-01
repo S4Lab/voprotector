@@ -12,6 +12,8 @@ const void *last_accessed_pointer;
 
 //#define ENABLE_VO_DEBUG_MESSAGES
 void debug (const char *msg1, const char *msg2 = 0);
+void debug (const char *msg1, const int arg2);
+void debugptr (const char *ptr);
 
 int end_of_execution (const char *&ptr);
 int printf_command (const char *&ptr);
@@ -19,8 +21,9 @@ int strcmp_command (const char *&ptr);
 void assign_variable_command (const char *&ptr);
 void jump_command (const char *&ptr);
 void if_then_else_command (const char *&ptr);
-bool do_comparison (const char *&ptr, int64 arg0, int64 arg1);
+bool do_comparison (const char *&ptr);
 int64 get_argument (const char *&ptr);
+void skip_argument (const char *&ptr);
 
 const int pointer_size = 8;
 const int constant_size = 4;
@@ -49,16 +52,30 @@ void debug (const char *msg1, const char *msg2) {
 #endif
 }
 
+void debug (const char *msg1, const int arg2) {
+#ifdef ENABLE_VO_DEBUG_MESSAGES
+  printf ("\t--- %s [0x%x]\n", msg1, arg2);
+#endif
+}
+
+void debugptr (const char *ptr) {
+#ifdef ENABLE_VO_DEBUG_MESSAGES
+  printf ("\t\t[ptr-1, ptr, ptr+1] => [0x%x 0x%x 0x%x]\n", *(ptr-1), *ptr, *(ptr+1));
+#endif
+}
+
 int main_loop (const char *ptr) {
   ptr += 8;
   for (;;) {
     debug("before switch-case...");
+    debugptr (ptr);
     switch (*ptr++) {
       case 0x00:
         debug("0x00 -> end_of_execution");
         return end_of_execution (ptr);
       case 0x01:
         debug("0x01 -> if_then_else_command");
+        debugptr (ptr);
         if_then_else_command (ptr);
         break;
       case 0x03:
@@ -133,33 +150,58 @@ void if_then_else_command (const char *&ptr) {
   }
 }
 
-bool do_comparison (const char *&ptr, int64 arg0, int64 arg1) {
+bool do_comparison (const char *&ptr) {
   const char type = *ptr;
   ++ptr;
   if (type == 0x1) {
     debug ("do_comparison: 0x1 <");
+    debugptr (ptr);
+    const int64 arg0 = get_argument (ptr);
+    const int64 arg1 = get_argument (ptr);
     return arg0 < arg1;
   } else if (type == 0x02) {
     debug ("do_comparison: 0x2 <=");
+    const int64 arg0 = get_argument (ptr);
+    const int64 arg1 = get_argument (ptr);
     return arg0 <= arg1;
   } else if (type == 0x03) {
     debug ("do_comparison: 0x3 >");
+    const int64 arg0 = get_argument (ptr);
+    const int64 arg1 = get_argument (ptr);
     return arg0 > arg1;
   } else if (type == 0x04) {
     debug ("do_comparison: 0x4 >=");
+    const int64 arg0 = get_argument (ptr);
+    const int64 arg1 = get_argument (ptr);
     return arg0 >= arg1;
   } else if (type == 0x05) {
     debug ("do_comparison: 0x5 ==");
+    const int64 arg0 = get_argument (ptr);
+    const int64 arg1 = get_argument (ptr);
     return arg0 == arg1;
   } else if (type == 0x06) {
     debug ("do_comparison: 0x6 !=");
+    const int64 arg0 = get_argument (ptr);
+    const int64 arg1 = get_argument (ptr);
     return arg0 != arg1;
   } else if (type == 0x07) {
     debug ("do_comparison: 0x7 &&");
-    return bool(arg0) && bool(arg1);
+    const int64 arg0 = get_argument (ptr);
+    if (!arg0) {
+      skip_argument (ptr);
+      return false;
+    }
+    const int64 arg1 = get_argument (ptr);
+    return bool(arg1);
   } else if (type == 0x08) {
     debug ("do_comparison: 0x8 ||");
-    return bool(arg0) || bool(arg1);
+    const int64 arg0 = get_argument (ptr);
+    if (arg0) {
+      skip_argument (ptr);
+      return true;
+    }
+    const int64 arg1 = get_argument (ptr);
+    return bool(arg1);
   } else {
     throw "wrong operator";
   }
@@ -199,9 +241,8 @@ int64 get_argument (const char *&ptr) {
     return res;
   } else if (type == 0x06) {
     debug ("get_argument: 0x06 -> boolean condition: 1< 2<= 3> 4>= 5== 6!= 7&& 8||");
-    const int64 arg0 = get_argument (ptr);
-    const int64 arg1 = get_argument (ptr);
-    const bool res = do_comparison (ptr, arg0, arg1);
+    debugptr (ptr);
+    const bool res = do_comparison (ptr);
     last_accessed_pointer = 0;
     return res;
   } else if (type == 0x07) {
@@ -282,7 +323,43 @@ int64 get_argument (const char *&ptr) {
     last_accessed_pointer = 0;
     return left + right;
   } else {
+    debug ("get_argument: unknown-type", type);
     throw "wrong type";
+  }
+}
+
+void skip_argument (const char *&ptr) {
+  const char type = *ptr;
+  ++ptr;
+  switch (type) {
+    case 0x01:
+    case 0x03:
+    case 0x04:
+    case 0x11:
+      ptr += pointer_size;
+      break;
+    case 0x02:
+    case 0x07:
+    case 0x08:
+    case 0x09:
+      ptr += constant_size;
+      break;
+    case 0x06:
+      ++ptr;
+    case 0x0A:
+    case 0x0B:
+    case 0x0C:
+    case 0x0E:
+    case 0x10:
+    case 0x12:
+      skip_argument (ptr);
+    case 0x0D:
+    case 0x05:
+    case 0x0F:
+      skip_argument (ptr);
+      break;
+    default:
+      throw "wrong type";
   }
 }
 
