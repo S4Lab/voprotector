@@ -9,6 +9,8 @@
 #include "minusvoencoder.h"
 #include "subtractvoencoder.h"
 #include "addvoencoder.h"
+#include "multiplyvoencoder.h"
+#include "dividevoencoder.h"
 #include "intvoencoder.h"
 #include "stringvoencoder.h"
 #include "returnvoencoder.h"
@@ -53,6 +55,12 @@ VoEncoderPtr VirtualizationObfuscationProtector::evaluateSynthesizedAttribute (S
 
         case V_SgAddOp:
             return VoEncoderPtr (new AddVoEncoder (synAttributes));
+
+        case V_SgMultiplyOp:
+            return VoEncoderPtr (new MultiplyVoEncoder (synAttributes));
+
+        case V_SgDivideOp:
+            return VoEncoderPtr (new DivideVoEncoder (synAttributes));
 
         case V_SgIntVal:
             return VoEncoderPtr (new IntVoEncoder (isSgIntVal (node)->get_value ()));
