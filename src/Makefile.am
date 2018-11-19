@@ -13,7 +13,7 @@ bin_PROGRAMS = moveDeclarationToInnermostScope voprotector
 
 moveDeclarationToInnermostScope_SOURCES = moveDeclarationToInnermostScope.C
 
-voprotector_SOURCES = voprotector.C typedvalue.C voencoder.C sequencevoencoder.C minusvoencoder.C intvoencoder.C returnvoencoder.C jumpvoencoder.C conditionvoencoder.C ifthenelsevoencoder.C pntrderefvoencoder.C addressofvoencoder.C assignvoencoder.C varrefvoencoder.C vardeclvoencoder.C printfvoencoder.C rootvoencoder.C virtualizationobfuscationprotector.C subtractvoencoder.C stringvoencoder.C strcmpvoencoder.C addvoencoder.C multiplyvoencoder.C dividevoencoder.C
+voprotector_SOURCES = voprotector.C typedvalue.C voencoder.C sequencevoencoder.C notvoencoder.C minusvoencoder.C intvoencoder.C returnvoencoder.C jumpvoencoder.C conditionvoencoder.C ifthenelsevoencoder.C pntrderefvoencoder.C addressofvoencoder.C assignvoencoder.C varrefvoencoder.C vardeclvoencoder.C printfvoencoder.C rootvoencoder.C virtualizationobfuscationprotector.C subtractvoencoder.C stringvoencoder.C strcmpvoencoder.C addvoencoder.C multiplyvoencoder.C dividevoencoder.C
 
 $(voprotector_OBJECTS): rose.h.gch
 

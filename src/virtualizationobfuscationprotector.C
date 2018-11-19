@@ -6,6 +6,7 @@
 #include "vardeclvoencoder.h"
 #include "varrefvoencoder.h"
 #include "assignvoencoder.h"
+#include "notvoencoder.h"
 #include "minusvoencoder.h"
 #include "subtractvoencoder.h"
 #include "addvoencoder.h"
@@ -46,6 +47,9 @@ VoEncoderPtr VirtualizationObfuscationProtector::evaluateSynthesizedAttribute (S
 
         case V_SgFunctionCallExp: 
             return visitFunction (isSgFunctionCallExp (node), synAttributes);
+
+        case V_SgNotOp:
+            return VoEncoderPtr (new NotVoEncoder (synAttributes));
 
         case V_SgMinusOp:
             return VoEncoderPtr (new MinusVoEncoder (synAttributes));

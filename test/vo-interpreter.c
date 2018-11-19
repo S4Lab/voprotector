@@ -334,6 +334,11 @@ int64 get_argument (const char *&ptr) {
     const int64 right = get_argument (ptr);
     last_accessed_pointer = 0;
     return left / right;
+  } else if (type == 0x15) {
+    debug ("get_argument: 0x15 -> not operator");
+    const bool res = !get_argument (ptr);
+    last_accessed_pointer = 0;
+    return res;
   } else {
     debug ("get_argument: unknown-type", type);
     throw "wrong type";
