@@ -339,6 +339,12 @@ int64 get_argument (const char *&ptr) {
     const bool res = !get_argument (ptr);
     last_accessed_pointer = 0;
     return res;
+  } else if (type == 0x16) {
+    debug ("get_argument: 0x16 -> remainder/mod");
+    const int64 left = get_argument (ptr);
+    const int64 right = get_argument (ptr);
+    last_accessed_pointer = 0;
+    return left % right;
   } else {
     debug ("get_argument: unknown-type", type);
     throw "wrong type";
